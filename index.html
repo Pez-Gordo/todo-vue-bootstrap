@@ -6,7 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
-
+    <style>
+        .taskDone {
+            text-decoration: line-through;
+        }
+    </style>
     <title>To-Do Vue</title>
 </head>
 <body>
@@ -14,6 +18,13 @@
         <!-- Vuejs Component -->
         <div id="taskApp" class="col-sm-8 col-sm-offset-2">
             <h1>{{nameApp}}</h1>
+
+            <form v-on:submit="addTask">
+                <input type="text" v-model="tasks.title" class="form-control">
+                <input type="submit" value="Add Task" class="btn btn-block btn-success">
+            </form>
+            <br>
+
             <table class="table">
                 <thead>
                     <tr>
@@ -25,12 +36,14 @@
                 <tbody>
                     <tr v-for="task in tasks">
                         <td>
-                            <input type="checkbox">
+                            <input type="checkbox" v-model="task.done">
                         </td>
-                        <td>
+                        <td :class="{taskDone: task.done}">
                             {{task.title}}
                         </td>
-                        <td></td>
+                        <td>
+                            <button v-on:click="deleteTask(task)" class="btn btn-danger">Delete</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -44,18 +57,34 @@
         new Vue({
             el: '#taskApp',
             data: {
-                nameApp: 'Tareas Vue.js',
+                nameApp: 'Tasks Vue.js',
                 tasks: [
                     {
                         title: 'tarea 1',
+                        done: false
                     },
                     {
                         title: 'tarea 2',
+                        done: false
                     },
                     {
                         title: 'tarea 3',
+                        done: false
                     },
                 ]
+            },
+            methods: {
+                deleteTask: function(task) {
+                    this.tasks.splice(this.tasks.indexOf(task), 1)
+                },
+                addTask: function(e) {
+                    e.preventDefault()
+                    this.tasks.push({
+                        title: this.tasks.title,
+                        done: false
+                    })
+                    this.tasks.title = ""
+                }
             }
         })
     </script>
